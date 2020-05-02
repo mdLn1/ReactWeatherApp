@@ -43,6 +43,9 @@ const findCity = async (req, res) => {
 
 const allCities = async (req, res) => {
   const { cities } = req.body;
+  throw new CustomError(
+    `haha let's see ${process.env.API_KEY} or port ${process.env.PORT}`, 400
+  );
   const allCitiesExists = cities.every((el) =>
     availableCities.some((city) => city.id === parseInt(el))
   );
