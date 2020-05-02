@@ -7,6 +7,7 @@ const path = require("path");
 const favicon = require("express-favicon");
 const baseUrl = "https://api.openweathermap.org/data/2.5/weather?";
 const availableCities = require("./cities.json");
+
 const api_key = process.env.API_KEY;
 app.use(favicon(__dirname + "/client/build/favicon.ico"));
 class CustomError extends Error {
