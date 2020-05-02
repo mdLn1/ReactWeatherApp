@@ -6,10 +6,6 @@ const exceptionHandler = require("./utils/exceptionHandler");
 const path = require("path");
 const favicon = require("express-favicon");
 const baseUrl = "https://api.openweathermap.org/data/2.5/weather?";
-if (process.env.NODE_ENV !== "production") {
-  const dotenv = require("dotenv");
-  dotenv.config();
-}
 const availableCities = require("./cities.json");
 const api_key = process.env.API_KEY;
 app.use(favicon(__dirname + "/client/build/favicon.ico"));
@@ -43,9 +39,6 @@ const findCity = async (req, res) => {
 
 const allCities = async (req, res) => {
   const { cities } = req.body;
-  throw new CustomError(
-    `haha let's see ${process.env.API_KEY} or port ${process.env.PORT}`, 400
-  );
   const allCitiesExists = cities.every((el) =>
     availableCities.some((city) => city.id === parseInt(el))
   );
