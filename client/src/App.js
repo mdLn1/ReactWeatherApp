@@ -5,6 +5,7 @@ import "./App.css";
 import About from "./Pages/About";
 import Home from "./Pages/Home";
 import getCookie from "./utils/getCookie";
+import socketIOClient from "socket.io-client";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -12,6 +13,8 @@ export default class App extends React.Component {
 
     this.state = {
       cookieConsentShow: true,
+      // remember to add this as env var
+      endpoint: process.env.REACT_APP_HOST || "http://localhost:5000",
     };
   }
   componentDidMount() {
@@ -31,7 +34,18 @@ export default class App extends React.Component {
       "cookieConsent=true" + `;expires=${d.toUTCString()};path=/`;
   };
 
+  send = () => {
+    const socket = socketIOClient(this.state.endpoint);
+    socket.emit("weatherRequests", {});
+  };
+
   render() {
+    const socket = socketIOClient(this.state.endpoint);
+    socket.on("weatherRequests", (requestsLeft) => {
+      document.getElementById("request-count").innerText =
+        "Weather queries left for today: " + requestsLeft;
+    });
+
     return (
       <Router>
         <div
@@ -39,12 +53,17 @@ export default class App extends React.Component {
           style={{ position: "relative", minHeight: "100vh" }}
         >
           <Navbar />
+          <span id="request-count"></span>
+
           <Switch>
             <Route
               exact
               path="/"
               component={() => (
-                <Home cookieConsentShow={this.state.cookieConsentShow} />
+                <Home
+                  cookieConsentShow={this.state.cookieConsentShow}
+                  sendRequest={this.send}
+                />
               )}
             />
             <Route exact path="/about" component={About} />
@@ -56,13 +75,11 @@ export default class App extends React.Component {
             <div
               style={{
                 textAlign: "center",
-                padding: ".5rem 1rem",
+                padding: ".5rem 1.5rem",
               }}
             >
-              <span>
-                This website uses cookies to improve users experience, by using
-                it you agree to the use of cookies.{" "}
-              </span>
+              This website uses cookies to improve users experience, by using it
+              you agree to the use of cookies.{" "}
               <span
                 className="close"
                 style={{ color: "black" }}

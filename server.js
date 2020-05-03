@@ -7,7 +7,12 @@ const path = require("path");
 const favicon = require("express-favicon");
 const baseUrl = "https://api.openweathermap.org/data/2.5/weather?";
 const availableCities = require("./cities.json");
-
+const http = require("http");
+const socketIO = require("socket.io");
+var cron = require("node-cron");
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 const api_key = process.env.API_KEY;
 app.use(favicon(__dirname + "/client/build/favicon.ico"));
 class CustomError extends Error {
@@ -23,17 +28,26 @@ const compression = require("compression");
 const helmet = require("helmet");
 
 app.use(cors());
-
+let calls = 999;
 app.use(compression());
 app.use(helmet());
 
 app.use(express.json({ extended: false }));
+
+cron.schedule("59 23 * * *", () => {
+  calls = 999;
+});
 
 const findCity = async (req, res) => {
   const { city } = req.body;
   const cityExists = availableCities.find((el) => el.id == city);
   if (!cityExists) throw new CustomError("City unavailable", 400);
   let url = baseUrl + `id=${city}&appid=${api_key}`;
+  if (calls < 1) {
+    throw new CustomError("No more requests can be done today", 400);
+  } else {
+    --calls;
+  }
   const response = await axios.get(url);
   res.status(200).json({ response: response.data });
 };
@@ -50,9 +64,15 @@ const allCities = async (req, res) => {
     url += cities[i] + ",";
   }
   url += cities[cities.length - 1] + `&appid=${api_key}`;
+  if (calls - cities.length < 1) {
+    throw new CustomError("No more requests can be done today", 400);
+  } else {
+    calls -= cities.length;
+  }
   const response = await axios.get(url);
   res.status(200).json(response.data.list);
 };
+
 app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, "/client/build")));
 
@@ -80,11 +100,19 @@ app.use((req, res, next) => {
   res.status(404).json({ errors: "Page not found" });
 });
 
-// Global error handling through middleware
 app.use((err, req, res, next) => {
   res
     .status(err.statusCode ? err.statusCode : 500)
     .json({ errors: Array.isArray(err.message) ? err.message : [err.message] });
 });
 
-app.listen(PORT, () => console.log(`API is listening on port ${PORT}`));
+const server = http.createServer(app);
+
+const io = socketIO(server);
+io.on("connection", (socket) => {
+  socket.on("weatherRequests", () => {
+    io.sockets.emit("weatherRequests", calls);
+  });
+});
+
+server.listen(PORT);

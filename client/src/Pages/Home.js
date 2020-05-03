@@ -62,6 +62,7 @@ export default class Home extends Component {
           },
         }
       );
+      this.props.sendRequest();
       this.setState((prevState) => ({
         ...prevState,
         cities: [city, ...prevState.cities],
@@ -80,11 +81,17 @@ export default class Home extends Component {
         document.cookie = `savedCities=${city};expires=${d.toUTCString()};path=/`;
       }
     } catch (error) {
-      if (error.response)
+      if (error.response?.data?.errors)
         this.setState({
           loadingSingle: false,
           errors: error.response.data.errors,
         });
+      else {
+        this.setState({
+          loadingSingle: false,
+          errors: ["Error while establishing connection"],
+        });
+      }
     }
   };
 
@@ -135,13 +142,21 @@ export default class Home extends Component {
         response: response.data,
         cities: cities,
       });
+      this.props.sendRequest();
     } catch (error) {
-      if (error.response)
+      if (error.response?.data?.errors) {
         this.setState({
           loading: false,
           errors: [error.response.data.errors],
           cities: cities,
         });
+      } else {
+        this.setState({
+          loading: false,
+          errors: ["Error while establishing connection"],
+          cities: cities,
+        });
+      }
     }
   }
 
@@ -154,6 +169,7 @@ export default class Home extends Component {
       errors,
       success,
     } = this.state;
+    
     return (
       <Fragment>
         {response.length === 0 && !loading && (

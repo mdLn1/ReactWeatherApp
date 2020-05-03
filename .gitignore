@@ -9,6 +9,7 @@ client.pnp.js
 
 # testing
 client/coverage
+.env
 
 # production
 client/build
