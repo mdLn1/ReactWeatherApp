@@ -13,8 +13,7 @@ export default class App extends React.Component {
 
     this.state = {
       cookieConsentShow: true,
-      // remember to add this as env var
-      endpoint: process.env.REACT_APP_HOST || "http://localhost:8080",
+      endpoint: "http://localhost:8080",
     };
   }
   componentDidMount() {

@@ -24,6 +24,7 @@ const conditions = {
 export default class Home extends Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     //3117735, 2648110, 1816670, 6094817, 5368361, 683506
     this.state = {
       cities: [2648110, 683506, 5368361, 1816670],
@@ -117,16 +118,20 @@ export default class Home extends Component {
       response: prevState.response.filter((el) => el.id !== city),
     }));
   };
-
-  async componentDidMount() {
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+  componentDidMount() {
+    this._isMounted = true;
     let existingCookie = getCookie("savedCities");
     let { cities } = this.state;
     if (existingCookie) {
       cities = existingCookie.split(",");
     }
-    try {
-      const response = await axios.post(
-        "/api/all-cities",
+    // try {
+    this._isMounted && axios
+      .post(
+        "http://localhost:8080/api/all-cities",
         {
           cities,
         },
@@ -136,28 +141,31 @@ export default class Home extends Component {
             "Content-Type": "application/json",
           },
         }
-      );
-      this.setState({
-        loading: false,
-        response: response.data,
-        cities: cities,
+      )
+      .then((response) => {
+       this._isMounted && this.setState({
+          loading: false,
+          response: response.data,
+          cities: cities,
+          errors: null
+        });
+        this._isMounted && this.props.sendRequest();
+      })
+      .catch((error) => {
+        if (error.response?.data?.errors) {
+          this._isMounted && this.setState({
+            loading: false,
+            errors: [error.response.data.errors],
+            cities: cities,
+          });
+        } else {
+          this._isMounted && this.setState({
+            loading: false,
+            errors: ["Error while establishing connection"],
+            cities: cities,
+          });
+        }
       });
-      this.props.sendRequest();
-    } catch (error) {
-      if (error.response?.data?.errors) {
-        this.setState({
-          loading: false,
-          errors: [error.response.data.errors],
-          cities: cities,
-        });
-      } else {
-        this.setState({
-          loading: false,
-          errors: ["Error while establishing connection"],
-          cities: cities,
-        });
-      }
-    }
   }
 
   render() {
@@ -169,7 +177,7 @@ export default class Home extends Component {
       errors,
       success,
     } = this.state;
-    
+
     return (
       <Fragment>
         {response.length === 0 && !loading && (

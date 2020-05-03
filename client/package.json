@@ -14,8 +14,8 @@
     "socket.io-client": "^2.3.0"
   },
   "scripts": {
-    "start": "set REACT_APP_HOST=<set your host> && react-scripts start",
-    "build": "set REACT_APP_HOST=http://localhost:8080 && react-scripts build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -109,8 +109,9 @@ app.use((err, req, res, next) => {
 const server = http.createServer(app);
 
 const io = socketIO(server);
-io.on("connection", (socket) => {
-  socket.on("weatherRequests", () => {
+io.sockets.on("connection", (socket) => {
+
+  socket.on("weatherRequests", (el) => {
     io.sockets.emit("weatherRequests", calls);
   });
 });
