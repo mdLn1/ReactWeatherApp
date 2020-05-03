@@ -13,6 +13,7 @@ var cron = require("node-cron");
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
+// this must be setup to work with open weather api
 const api_key = process.env.API_KEY;
 app.use(favicon(__dirname + "/client/build/favicon.ico"));
 class CustomError extends Error {

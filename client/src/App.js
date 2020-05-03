@@ -13,7 +13,8 @@ export default class App extends React.Component {
 
     this.state = {
       cookieConsentShow: true,
-      endpoint: "https://cities-weather-app.herokuapp.com",
+      // make sure you edit this
+      endpoint: "<add endpoint here>",
     };
   }
   componentDidMount() {
