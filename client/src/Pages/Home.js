@@ -131,7 +131,7 @@ export default class Home extends Component {
     // try {
     this._isMounted && axios
       .post(
-        "http://localhost:8080/api/all-cities",
+        "/api/all-cities",
         {
           cities,
         },
