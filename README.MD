@@ -26,12 +26,12 @@ Once the setup is done you need to run from the repository root `npm install` an
 
 ### Desktop
 
-![Desktop screenshot](https://raw.githubusercontent.com/mdLn1/ReactWeatherApp/assets/desktop.png "web app desktop view")
+![Desktop screenshot](https://github.com/mdLn1/ReactWeatherApp/blob/master/assets/desktop.png "web app desktop view")
 
 ### Tablet
 
-![Tablet screenshot](https://raw.githubusercontent.com/mdLn1/ReactWeatherApp/assets/tablet.png "web app tablet view")
+![Tablet screenshot](https://raw.githubusercontent.com/mdLn1/ReactWeatherApp/blob/master/assets/tablet.png "web app tablet view")
 
 ### Mobile
 
-![Mobile screenshot](https://raw.githubusercontent.com/mdLn1/ReactWeatherApp/assets/mobile.png "web app mobile view")
+![Mobile screenshot](https://raw.githubusercontent.com/mdLn1/ReactWeatherApp/blob/master/assets/mobile.png "web app mobile view")
